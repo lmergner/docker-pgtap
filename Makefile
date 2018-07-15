@@ -1,13 +1,12 @@
-.PHONY: build clean all
+.PHONY: all build clean
 
 all: build
 
 build:
+	docker pull postgres:9-alpine
 	docker build . \
 		--no-cache \
-		-t lmergner/pgtap:latest \
- 		-t lmergner/pgtap:9-alpine
+		-t lmergner/pgtap:latest
 
 clean:
-	docker image prune -f
-	# docker rmi $(docker images --filter "dangling=true" --quiet)
+	docker rmi $(shell docker image ls -aq lmergner/pgtap) -f

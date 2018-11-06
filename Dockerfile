@@ -1,7 +1,7 @@
-from postgres:9-alpine
+from postgres:11-alpine
 MAINTAINER Luke Mergner <lmergner@gmail.com>
 
-ENV PGTAP_VERSION=v0.98.0 POSTGRES_DB=pytest-pgtap
+ENV PGTAP_VERSION=v0.99.0 POSTGRES_DB=pytest-pgtap
 
 COPY installcheck-pgtap.sh /docker-entrypoint-initdb.d/
 COPY docker-healthcheck /usr/local/bin/

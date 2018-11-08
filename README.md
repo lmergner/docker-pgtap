@@ -1,7 +1,7 @@
 docker-pgtap
 ------------
 
-Creates a [Docker][] image with [PostgreSQL][] 9 and [pgTap][]. It inherits from the offical [docker image][].
+Creates a [Docker][] image with [PostgreSQL][] 11 and [pgTap][] 0.99.0. It inherits from the offical [docker image][].
 
 Note:  it will run the regression tests after docker-postgres creates the files and starts the server.
 

@@ -3,7 +3,7 @@
 all: build
 
 build:
-	docker pull postgres:9-alpine
+	docker pull postgres:11-alpine
 	docker build . \
 		--no-cache \
 		-t lmergner/pgtap:latest

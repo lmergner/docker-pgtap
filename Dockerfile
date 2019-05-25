@@ -1,7 +1,13 @@
-from postgres:11-alpine
-MAINTAINER Luke Mergner <lmergner@gmail.com>
+ARG PG_VERSION="11-alpine"
 
-ENV PGTAP_VERSION=v1.0.0 POSTGRES_DB=pytest-pgtap
+from postgres:${PG_VERSION}
+
+LABEL maintainer="lmergner@gmail.com"
+LABEL version="0.0.2"
+
+ARG PGTAP_VERSION="v1.0.0"
+ENV PGTAP_VERSION=${PGTAP_VERSION}
+ENV POSTGRES_DB=pytest-pgtap
 
 COPY installcheck-pgtap.sh /docker-entrypoint-initdb.d/
 COPY docker-healthcheck /usr/local/bin/

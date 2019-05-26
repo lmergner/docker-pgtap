@@ -1,12 +1,27 @@
-.PHONY: all build clean list
+.PHONY: all pull latest build stop clean
 
 all: latest
 
-# TODO: build all the major pg versions with latest pgtap
+# TODO: matrix build all the major pg versions with latest pgtap
 # TODO: sort all the versions highest to lowest
 
+REPO?=lmergner
+IMAGE_NAME?=pgtap
 PG_VERSION?=11
 PGTAP_VERSION?=v1.0.0
+IMAGE_TAG?=${PG_VERSION}-${PGTAP_VERSION}
+CONTAINER_NAME?=${IMAGE_NAME}_${IMAGE_TAG}
+PORT?=5432
+
+define BUILD
+docker build . \
+	--no-cache \
+	--force-rm \
+	--build-arg PG_VERSION=${PG_VERSION}-alpine \
+	--build-arg PGTAP_VERSION=${PGTAP_VERSION} \
+	-t ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+endef
+export BUILD
 
 define GET_VERSIONS
 import json
@@ -20,7 +35,7 @@ urls = {
     "pgtap": "https://api.github.com/repos/theory/pgtap/tags",
     "postgres": "https://hub.docker.com/v2/repositories/library/postgres/tags",
 }
-
+t
 
 for target, url in urls.items():
     req = Request(url)
@@ -39,25 +54,31 @@ for target, url in urls.items():
 endef
 export GET_VERSIONS
 
-latest:
+pull:
 	docker pull postgres:${PG_VERSION}-alpine
-	docker build . \
-		--no-cache \
-		--build-arg PG_VERSION=${PG_VERSION}-alpine \
-		--build-arg PGTAP_VERSION=${PGTAP_VERSION} \
-		-t lmergner/pgtap:${PG_VERSION}-${PGTAP_VERSION} \
-		-t lmergner/pgtap:latest
 
-build:
-	docker pull postgres:${PG_VERSION}-alpine
-	docker build . \
-		--no-cache \
-		--build-arg PG_VERSION=${PG_VERSION}-alpine \
-		--build-arg PGTAP_VERSION=${PGTAP_VERSION} \
-		-t lmergner/pgtap:${PG_VERSION}-${PGTAP_VERSION}
+latest:
+	$(BUILD) -t lmergner/pgtap:latest
+
+build:  ## Build the pgtap image
+	$(BUILD)
 
 list:
+	## retrieve pgtap and postgres versions which can be supplied
+	## as build_args to docker build via PG_VERSION and PGTAP_VERSION
+	## make args
 	@python -c "$$GET_VERSIONS"
 
-clean:
-	docker rmi $(shell docker image ls -aq lmergner/pgtap) -f
+run:    ## run the docker container
+	docker run \
+		-d \
+		--name ${CONTAINER_NAME} \
+		-p ${PORT}:5432 \
+		$(if $(POSTGRES_USER), -e POSTGRES_USER=${POSTGRES_USER}) $(if $(POSTGRES_DB), -e POSTGRES_DB=${POSTGRES_DB}) ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+
+stop:
+	docker stop ${CONTAINER_NAME}
+	docker rm ${CONTAINER_NAME}
+
+clean: stop  ## Remove docker images tagged with lmergner/pgtap
+	docker rmi $(shell docker image ls -aq ${REPO}/${IMAGE_NAME}) -f

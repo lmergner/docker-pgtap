@@ -1,12 +1,12 @@
 .PHONY: all build clean list
 
-all: build
+all: latest
 
 # TODO: build all the major pg versions with latest pgtap
+# TODO: sort all the versions highest to lowest
 
 PG_VERSION?=11
 PGTAP_VERSION?=v1.0.0
-
 
 define GET_VERSIONS
 import json
@@ -14,7 +14,7 @@ import json
 try:
     from urllib.request import urlopen, Request
 except ImportError:
-    from urllib2 import urlopen
+    from urllib2 import urlopen, Request
 
 urls = {
     "pgtap": "https://api.github.com/repos/theory/pgtap/tags",
@@ -39,13 +39,22 @@ for target, url in urls.items():
 endef
 export GET_VERSIONS
 
+latest:
+	docker pull postgres:${PG_VERSION}-alpine
+	docker build . \
+		--no-cache \
+		--build-arg PG_VERSION=${PG_VERSION}-alpine \
+		--build-arg PGTAP_VERSION=${PGTAP_VERSION} \
+		-t lmergner/pgtap:${PG_VERSION}-${PGTAP_VERSION} \
+		-t lmergner/pgtap:latest
+
 build:
 	docker pull postgres:${PG_VERSION}-alpine
 	docker build . \
 		--no-cache \
 		--build-arg PG_VERSION=${PG_VERSION}-alpine \
 		--build-arg PGTAP_VERSION=${PGTAP_VERSION} \
-		-t lmergner/pgtap:latest
+		-t lmergner/pgtap:${PG_VERSION}-${PGTAP_VERSION}
 
 list:
 	@python -c "$$GET_VERSIONS"

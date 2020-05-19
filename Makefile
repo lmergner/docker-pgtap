@@ -8,7 +8,7 @@ all: latest
 REPO?=lmergner
 IMAGE_NAME?=pgtap
 PG_VERSION?=11
-PGTAP_VERSION?=v1.0.0
+PGTAP_VERSION?=v1.1.0
 IMAGE_TAG?=${PG_VERSION}-${PGTAP_VERSION}
 CONTAINER_NAME?=${IMAGE_NAME}_${IMAGE_TAG}
 PORT?=5432
@@ -35,7 +35,7 @@ urls = {
     "pgtap": "https://api.github.com/repos/theory/pgtap/tags",
     "postgres": "https://hub.docker.com/v2/repositories/library/postgres/tags",
 }
-t
+
 
 for target, url in urls.items():
     req = Request(url)

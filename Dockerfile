@@ -1,11 +1,11 @@
-ARG PG_VERSION="11-alpine"
+ARG PG_VERSION="12-alpine"
 
 from postgres:${PG_VERSION}
 
 LABEL maintainer="lmergner@gmail.com"
-LABEL version="0.0.2"
+LABEL version="0.0.3"
 
-ARG PGTAP_VERSION="v1.0.0"
+ARG PGTAP_VERSION="v1.1.0"
 ENV PGTAP_VERSION=${PGTAP_VERSION}
 ENV POSTGRES_DB=pytest-pgtap
 

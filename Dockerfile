@@ -3,7 +3,8 @@ ARG PG_VERSION="12-alpine"
 from postgres:${PG_VERSION}
 
 LABEL maintainer="lmergner@gmail.com"
-LABEL version="0.0.3"
+LABEL version.release="0.0.3" version.pgtap="v1.1.0" version.postgres="12"
+LABEL name="docker-pgtap"
 
 ARG PGTAP_VERSION="v1.1.0"
 ENV PGTAP_VERSION=${PGTAP_VERSION}

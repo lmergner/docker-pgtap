@@ -88,8 +88,7 @@ try:	## run the docker container with --rm
 	$(RUN) --rm
 
 stop:
-	docker stop ${CONTAINER_NAME}
-	docker rm ${CONTAINER_NAME}
+	@docker stop $${CONTAINER_NAME:-pgtap} 1>/dev/null && docker rm $${CONTAINER_NAME:-pgtap} 1>/dev/null
 
 clean: stop  ## Remove docker images tagged with lmergner/pgtap
 	docker rmi $(shell docker image ls -aq ${REPO}/${IMAGE_NAME}) -f

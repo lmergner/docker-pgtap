@@ -10,7 +10,6 @@ IMAGE_NAME?=pgtap
 PG_VERSION?=12
 PGTAP_VERSION?=v1.1.0
 IMAGE_TAG?=${PG_VERSION}-${PGTAP_VERSION}
-CONTAINER_NAME?=${IMAGE_NAME}_${IMAGE_TAG}
 PORT?=5432
 
 define BUILD
@@ -22,6 +21,19 @@ docker build . \
 	-t ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 endef
 export BUILD
+
+define run
+docker run \
+	-d \
+	-p ${PORT}:5432 \
+	$(if $(CONTAINER_NAME), --name ${CONTAINER_NAME}) \
+	$(if $(POSTGRES_USER), -e POSTGRES_USER=${POSTGRES_USER}) \
+	$(if $(POSTGRES_DB), -e POSTGRES_DB=${POSTGRES_DB}) \
+	$(if $(POSTGRES_PASSWORD), -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD}) \
+	${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+endef
+export RUN
+
 
 define GET_VERSIONS
 import json
@@ -70,11 +82,10 @@ list:
 	@python -c "$$GET_VERSIONS"
 
 run:    ## run the docker container
-	docker run \
-		-d \
-		--name ${CONTAINER_NAME} \
-		-p ${PORT}:5432 \
-		$(if $(POSTGRES_USER), -e POSTGRES_USER=${POSTGRES_USER}) $(if $(POSTGRES_DB), -e POSTGRES_DB=${POSTGRES_DB}) ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+	$(RUN)
+
+try:	## run the docker container with --rm
+	$(RUN) --rm
 
 stop:
 	docker stop ${CONTAINER_NAME}

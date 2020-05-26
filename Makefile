@@ -1,4 +1,4 @@
-.PHONY: all pull latest build stop clean
+.PHONY: all pull latest build stop clean try help
 
 all: latest
 
@@ -66,18 +66,22 @@ for target, url in urls.items():
 endef
 export GET_VERSIONS
 
-pull:
+.DEFAULT_GOAL := help
+
+pull:  ## pull the postgres:<pg_version>-alpine image
 	docker pull postgres:${PG_VERSION}-alpine
 
-latest:
+# TODO:  find ID by filtering and tag after build
+latest:  ## Build and tag as 'latest'
 	$(BUILD) -t lmergner/pgtap:latest
 
+# TODO:  Don't build if already exists
 build:  ## Build the pgtap image
 	$(BUILD)
 
-list:
+list:	## pull valid versions for pgTap (from Github) and PostgreSQL (from hub.docker.com)
 	## retrieve pgtap and postgres versions which can be supplied
-	## as build_args to docker build via PG_VERSION and PGTAP_VERSION
+	## as build_args to docker build via pg_version and PGTAP_VERSION
 	## make args
 	@python -c "$$GET_VERSIONS"
 
@@ -87,8 +91,12 @@ run:    ## run the docker container
 try:	## run the docker container with --rm
 	$(RUN) --rm
 
-stop:
-	@docker stop $${CONTAINER_NAME:-pgtap} 1>/dev/null && docker rm $${CONTAINER_NAME:-pgtap} 1>/dev/null
+# TODO:  filter by tags rather than container name
+stop:  ## Stop and remove the container. Defaults to 'pgtap' otherwise supply name as prefix
+	@docker stop $${CONTAINER_NAME:-pgtap} 1>/dev/null && docker rm $${CONTAINER_NAME:-pgtap}
 
-clean: stop  ## Remove docker images tagged with lmergner/pgtap
+clean: stop  ## remove docker images tagged with <repo>/<image_name>; default lmergner/pgtap
 	docker rmi $(shell docker image ls -aq ${REPO}/${IMAGE_NAME}) -f
+
+help:
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'

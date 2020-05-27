@@ -1,4 +1,4 @@
-.PHONY: all pull latest build stop clean try help
+.PHONY: all pull latest build stop clean try help run
 
 all: latest
 
@@ -22,7 +22,7 @@ docker build . \
 endef
 export BUILD
 
-define run
+define RUN
 docker run \
 	-d \
 	-p ${PORT}:5432 \

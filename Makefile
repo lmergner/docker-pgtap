@@ -91,27 +91,21 @@ list:	## pull valid versions for pgTap (from Github) and PostgreSQL (from hub.do
 	@python -c "$$GET_VERSIONS"
 
 run:    ## run the docker container
-	$(RUN) && docker logs ${CONTAINER_NAME}
+	$(RUN) 
 
 try:	## run the docker container with --rm
 	$(RUN) --rm
 
 # TODO:  filter by tags rather than container name
 stop:  ## Stop and remove the container. Defaults to 'pgtap' otherwise supply name as prefix
-	@docker stop $${CONTAINER_NAME:-pgtap} 1>/dev/null && docker rm $${CONTAINER_NAME:-pgtap}
+	-docker stop ${CONTAINER_NAME} 
 
-clean: stop  ## remove docker images tagged with <repo>/<image_name>; default lmergner/pgtap
-	docker rmi $(shell docker image ls -aq ${REPO}/${IMAGE_NAME}) -f
-
-shell:
-	docker exec -it ${CONTAINER_NAME} /bin/ash
+clean: stop  ## remove docker images tagged with <repo>/<image_name>, default lmergner/pgtap
+	-docker rm ${CONTAINER_NAME}
+	-docker rmi $(shell docker image ls -aq ${REPO}/${IMAGE_NAME}) -f
 
 psql:
-	URL="postgresql://$${POSTGRES_USER}:$${POSTGRES_PASS}@$${DOCKER_HOST%:*}/$${POSTGRES_DB}"
-	@echo $URL
-	@psql -d $URL
-
-
+	@psql -d postgresql://$${POSTGRES_USER}:$${POSTGRES_PASS}@$${DOCKER_HOST%:*}/$${POSTGRES_DB}
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'

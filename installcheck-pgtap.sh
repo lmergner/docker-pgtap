@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 set -ex
 cd pgtap
-make installcheck
+PGUSER=${POSTGRES_USER} make installcheck
 cd /

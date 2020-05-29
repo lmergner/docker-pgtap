@@ -1,4 +1,4 @@
-.PHONY: all pull latest build stop clean try help run
+.PHONY: all pull latest build stop clean try help run shell
 
 all: latest
 
@@ -12,12 +12,18 @@ PGTAP_VERSION?=v1.1.0
 IMAGE_TAG?=${PG_VERSION}-${PGTAP_VERSION}
 PORT?=5432
 
+target=$(shell docker ps --all --filter name=${CONTAINER_NAME} --format "{{.Names}}")
+
+
 define BUILD
 docker build . \
 	--no-cache \
 	--force-rm \
 	--build-arg PG_VERSION=${PG_VERSION}-alpine \
 	--build-arg PGTAP_VERSION=${PGTAP_VERSION} \
+	$(if $(POSTGRES_PASSWORD), --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD}) \
+	$(if $(POSTGRES_USER), --build-arg POSTGRES_USER=${POSTGRES_USER}) \
+	$(if $(POSTGRES_DB), --build-arg POSTGRES_DB=$${POSTGRES_DB}) \
 	-t ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 endef
 export BUILD
@@ -26,14 +32,13 @@ define RUN
 docker run \
 	-d \
 	-p ${PORT}:5432 \
-	$(if $(CONTAINER_NAME), --name ${CONTAINER_NAME}) \
+	$(if $(POSTGRES_PASSWORD),-e POSTGRES_PASSWORD=${POSTGRES_PASSWORD}) \
 	$(if $(POSTGRES_USER), -e POSTGRES_USER=${POSTGRES_USER}) \
 	$(if $(POSTGRES_DB), -e POSTGRES_DB=${POSTGRES_DB}) \
-	$(if $(POSTGRES_PASSWORD), -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD}) \
+	$(if $(CONTAINER_NAME), --name ${CONTAINER_NAME}) \
 	${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 endef
 export RUN
-
 
 define GET_VERSIONS
 import json
@@ -86,7 +91,7 @@ list:	## pull valid versions for pgTap (from Github) and PostgreSQL (from hub.do
 	@python -c "$$GET_VERSIONS"
 
 run:    ## run the docker container
-	$(RUN)
+	$(RUN) && docker logs ${CONTAINER_NAME}
 
 try:	## run the docker container with --rm
 	$(RUN) --rm
@@ -97,6 +102,16 @@ stop:  ## Stop and remove the container. Defaults to 'pgtap' otherwise supply na
 
 clean: stop  ## remove docker images tagged with <repo>/<image_name>; default lmergner/pgtap
 	docker rmi $(shell docker image ls -aq ${REPO}/${IMAGE_NAME}) -f
+
+shell:
+	docker exec -it ${CONTAINER_NAME} /bin/ash
+
+psql:
+	URL="postgresql://$${POSTGRES_USER}:$${POSTGRES_PASS}@$${DOCKER_HOST%:*}/$${POSTGRES_DB}"
+	@echo $URL
+	@psql -d $URL
+
+
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'

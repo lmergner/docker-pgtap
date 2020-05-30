@@ -67,6 +67,8 @@ for target, url in urls.items():
         name = tag.get("name")
         if target == "pgtap" and not name.startswith("v"):
             continue
+        if target == "postgres" and not name.endswith("-alpine"):
+            continue
         print("    %s" % name)
 endef
 export GET_VERSIONS

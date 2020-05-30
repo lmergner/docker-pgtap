@@ -12,8 +12,6 @@ PGTAP_VERSION?=v1.1.0
 IMAGE_TAG?=${PG_VERSION}-${PGTAP_VERSION}
 PORT?=5432
 
-target=$(shell docker ps --all --filter name=${CONTAINER_NAME} --format "{{.Names}}")
-
 
 define BUILD
 docker build . \
@@ -78,12 +76,13 @@ export GET_VERSIONS
 pull:  ## pull the postgres:<pg_version>-alpine image
 	docker pull postgres:${PG_VERSION}-alpine
 
-# TODO:  find ID by filtering and tag after build
+# TODO:  Don't build again, but find ID by filtering and tag after build
 latest:  ## Build and tag as 'latest'
 	$(BUILD) -t lmergner/pgtap:latest
 
 # TODO:  Don't build if already exists
 build:  ## Build the pgtap image
+	# docker ps --all --filter name=${CONTAINER_NAME} --format "{{.Names}}")
 	$(BUILD)
 
 list:	## pull valid versions for pgTap (from Github) and PostgreSQL (from hub.docker.com)

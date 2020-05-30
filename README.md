@@ -27,6 +27,8 @@ All variables can be supplied to `make`:
     POSTGRES_USER=soren_kierkegaard make run
 ```
 
+Using a .env file and some variety of dotenv makes this pretty easy.
+
 ## Build and Run without make
 
 Be sure to check the defaults in the Dockerfile.
@@ -41,14 +43,16 @@ docker run <repo>/<image>:<tag>
 
 ### Docker Build Args
 
-Used at build time.
-
 - PG_VERSION
-    `make list` will provide acceptable versions. You need to supply the `-alpine` if you bypass the Makefile. Note that this Dockerfile is not tested with Debian.
+    `make list` will provide acceptable versions. You need to supply the
+    `-alpine` if you bypass the Makefile. Note that this Dockerfile is not
+    tested with Debian base images.
 - PGTAP_VERSION
-    `make list` will provide acceptable versions. Note that the 'v' must prefix the version number.
+    `make list` will provide acceptable versions. Note that the 'v' must prefix
+    the version number.
 - REPO
-    Your [Docker namespace](https://docs.docker.com/docker-hub/repos/). Default: "lmergner."
+    Your [Docker namespace](https://docs.docker.com/docker-hub/repos/).
+    Default: "lmergner."
 - IMAGE_NAME
     Default: pgtap
 - IMAGE_TAG
@@ -56,7 +60,7 @@ Used at build time.
 
 ### Postgres ENV Vars
 
-Used at first run to create the database and install pgTap. See [the postgres image documentation](https://hub.docker.com/_/postgres) for how the variables are used by the base image.
+See [the postgres image documentation](https://hub.docker.com/_/postgres) for how the variables are used by the base image.
 
 - CONTAINER_NAME
     default: random docker identifier

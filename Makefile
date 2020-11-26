@@ -62,8 +62,6 @@ for target, url in urls.items():
         name = tag.get("name")
         if target == "pgtap" and not name.startswith("v"):
             continue
-        if target == "postgres" and not name.endswith("-alpine"):
-            continue
         print("    %s" % name)
 endef
 export GET_VERSIONS
@@ -83,7 +81,7 @@ build:  ## Build the pgtap image
 	$(BUILD)
 
 list:	## pull valid versions for pgTap (from Github) and PostgreSQL (from hub.docker.com)
-	## retrieve pgtap and postgres versions which can be supplied
+	## list pgtap and postgres versions which can be supplied
 	## as build_args to docker build via pg_version and PGTAP_VERSION
 	## make args
 	@python -c "$$GET_VERSIONS"

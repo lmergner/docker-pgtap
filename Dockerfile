@@ -19,7 +19,7 @@ RUN set -ex && \
     git clone git://github.com/theory/pgtap.git && \
     chown -R postgres:postgres pgtap/ && \
     cd pgtap/ && \
-    git checkout tags/${PGTAP_VERSION} && \
+    git checkout ${PGTAP_VERSION} && \
     make && make install
 
 LABEL maintainer="lmergner@gmail.com"

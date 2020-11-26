@@ -19,9 +19,6 @@ docker build . \
 	--force-rm \
 	--build-arg PG_VERSION=${PG_VERSION}-alpine \
 	--build-arg PGTAP_VERSION=${PGTAP_VERSION} \
-	$(if $(POSTGRES_PASSWORD), --build-arg POSTGRES_PASSWORD=${POSTGRES_PASSWORD}) \
-	$(if $(POSTGRES_USER), --build-arg POSTGRES_USER=${POSTGRES_USER}) \
-	$(if $(POSTGRES_DB), --build-arg POSTGRES_DB=$${POSTGRES_DB}) \
 	-t ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 endef
 export BUILD

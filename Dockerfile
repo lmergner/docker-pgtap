@@ -4,14 +4,7 @@ from postgres:${PG_VERSION}
 
 
 ARG PGTAP_VERSION="v1.1.0"
-ARG POSTGRES_PASSWORD=postgres
-ARG POSTGRES_USER=postgres
-ARG POSTGRES_DB=postgres
 
-ENV PGTAP_VERSION=${PGTAP_VERSION}
-ENV POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-ENV POSTGRES_USER=${POSTGRES_USER}
-ENV POSTGRES_DB=${POSTGRES_DB}
 
 COPY installcheck-pgtap.sh /docker-entrypoint-initdb.d/
 COPY docker-healthcheck /usr/local/bin/

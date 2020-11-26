@@ -1,4 +1,4 @@
-name: ci
+name: matrix build and push from version tags
 
 on:
   push:
@@ -12,6 +12,8 @@ jobs:
         postgres_version: [11, 12]
         pgtap_version: [v1.0.0, v1.1.0]
         include:
+          # v1.1.0 does not support pg13 yet
+          # https://github.com/theory/pgtap/commit/99fdf949b8c3ea157fe078941c6e2af8c7dd7ae8
           - postgres_version: 13
             pgtap_version: master
 
@@ -46,6 +48,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
+          platforms: linux/amd64,linux/arm/v7
           push: true
           tags: ${{ github.repository_owner }}/pgtap:${{matrix.postgres_version}}-${{matrix.pgtap_version}}
           cache-from: type=local,src=/tmp/.buildx-cache
@@ -56,3 +59,11 @@ jobs:
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Docker Hub Description
+        uses: peter-evans/dockerhub-description@v2
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          repository: ${{ github.repository_owner }}/pgtap
+          

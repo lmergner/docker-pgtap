@@ -1,4 +1,4 @@
-.PHONY: all pull latest build stop clean try help run shell
+.PHONY: all help pull latest build list run try stop clean psql exec
 
 all: latest
 
@@ -76,8 +76,8 @@ latest:  ## Build and tag as 'latest'
 	$(BUILD) -t lmergner/pgtap:latest
 
 # TODO:  Don't build if already exists
+#        docker ps --all --filter name=${CONTAINER_NAME} --format "{{.Names}}")
 build:  ## Build the pgtap image
-	# docker ps --all --filter name=${CONTAINER_NAME} --format "{{.Names}}")
 	$(BUILD)
 
 list:	## pull valid versions for pgTap (from Github) and PostgreSQL (from hub.docker.com)
@@ -100,8 +100,11 @@ clean: stop  ## remove docker images tagged with <repo>/<image_name>, default lm
 	-docker rm ${CONTAINER_NAME}
 	-docker rmi $(shell docker image ls -aq ${REPO}/${IMAGE_NAME}) -f
 
-psql:
-	@psql -d postgresql://$${POSTGRES_USER}:$${POSTGRES_PASS}@$${DOCKER_HOST%:*}/$${POSTGRES_DB}
+psql: ## Connect via psql
+	@psql --dbname postgresql://$${POSTGRES_USER}:$${POSTGRES_PASSWORD}@$${DOCKER_HOST#"ssh://"}/$${POSTGRES_DB}
+
+exec:
+	docker exec -it ${CONTAINER_NAME} ash
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'

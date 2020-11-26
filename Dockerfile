@@ -7,15 +7,16 @@ COPY installcheck-pgtap.sh /docker-entrypoint-initdb.d/
 COPY docker-healthcheck /usr/local/bin/
 COPY create-extension.sql /docker-entrypoint-initdb.d/
 
-# TODO: move locale support to a builder image
+# TODO: move musl-locale to a builder image
+# TODO: move pgtap to a builder image
 RUN set -ex && \
-    apk add --no-cache \
+    apk add --no-cache make && \
+    apk add --no-cache --virtual .build-dependencies \
     cmake make musl-dev gcc gettext-dev libintl \
     postgresql \
     postgresql-contrib \
     build-base \
     patch \
-    make \
     diffutils \
     git \
     perl && \
@@ -29,7 +30,9 @@ RUN set -ex && \
         chown -R postgres:postgres pgtap/ && \
         cd pgtap/ && \
         git checkout ${PGTAP_VERSION} && \
-        make && make install
+        make && make install && \
+    apk del .build-dependencies
+    # rm -r /pgtap only seems to save 20 mb
 
 LABEL maintainer="lmergner@gmail.com"
 LABEL version.release="0.0.4" version.pgtap="${PGTAP_VERSION}" version.postgres="${POSTGRES_VERSION}"

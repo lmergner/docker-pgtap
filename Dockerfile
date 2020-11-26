@@ -31,7 +31,7 @@ RUN set -ex && \
     make && make install
 
 LABEL maintainer="lmergner@gmail.com"
-LABEL version.release="0.0.4" version.pgtap="v1.1.0" version.postgres="13"
+LABEL org.opencontainers.image.source https://github.com/lmergner/docker-pytest
 LABEL name="docker-pgtap"
 
 HEALTHCHECK CMD [ "docker-healthcheck" ]

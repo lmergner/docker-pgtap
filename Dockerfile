@@ -5,6 +5,7 @@ from postgres:${POSTGRES_VERSION}
 
 COPY installcheck-pgtap.sh /docker-entrypoint-initdb.d/
 COPY docker-healthcheck /usr/local/bin/
+COPY create_extension.sql /docker-entrypoint-initdb.d/
 
 RUN set -ex && \
     apk add --no-cache \

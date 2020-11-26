@@ -39,6 +39,7 @@ jobs:
           context: ./
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
+          platforms: linux/amd64,linux/arm/v7
           push: true
           tags: ${{ github.repository_owner }}/pgtap:testing
           cache-from: type=local,src=/tmp/.buildx-cache

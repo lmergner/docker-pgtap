@@ -24,7 +24,7 @@ RUN set -ex && \
 
 LABEL maintainer="lmergner@gmail.com"
 LABEL version.release="0.0.4" version.pgtap="${PGTAP_VERSION}" version.postgres="${POSTGRES_VERSION}"
-LABEL org.opencontainers.image.source https://github.com/lmergner/docker-pytest
+LABEL org.opencontainers.image.source https://github.com/lmergner/docker-pgtap
 LABEL name="docker-pgtap"
 
 HEALTHCHECK CMD [ "docker-healthcheck" ]

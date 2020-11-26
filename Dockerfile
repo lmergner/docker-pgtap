@@ -1,6 +1,6 @@
-ARG PG_VERSION="13-alpine"
+ARG POSTGRES_VERSION="13-alpine"
 
-from postgres:${PG_VERSION}
+from postgres:${POSTGRES_VERSION}
 
 
 ARG PGTAP_VERSION="v1.1.0"
@@ -24,6 +24,7 @@ RUN set -ex && \
     make && make install
 
 LABEL maintainer="lmergner@gmail.com"
+LABEL version.release="0.0.4" version.pgtap="${PGTAP_VERSION}" version.postgres="${POSTGRES_VERSION}"
 LABEL org.opencontainers.image.source https://github.com/lmergner/docker-pytest
 LABEL name="docker-pgtap"
 

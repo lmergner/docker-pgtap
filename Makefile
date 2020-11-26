@@ -7,9 +7,9 @@ all: latest
 
 REPO?=lmergner
 IMAGE_NAME?=pgtap
-PG_VERSION?=13
+POSTGRES_VERSION?=13
 PGTAP_VERSION?=v1.1.0
-IMAGE_TAG?=${PG_VERSION}-${PGTAP_VERSION}
+IMAGE_TAG?=${POSTGRES_VERSION}-${PGTAP_VERSION}
 PORT?=5432
 
 
@@ -17,7 +17,7 @@ define BUILD
 docker build . \
 	--no-cache \
 	--force-rm \
-	--build-arg PG_VERSION=${PG_VERSION}-alpine \
+	--build-arg POSTGRES_VERSION=${POSTGRES_VERSION}-alpine \
 	--build-arg PGTAP_VERSION=${PGTAP_VERSION} \
 	-t ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 endef
@@ -71,7 +71,7 @@ export GET_VERSIONS
 .DEFAULT_GOAL := help
 
 pull:  ## pull the postgres:<pg_version>-alpine image
-	docker pull postgres:${PG_VERSION}-alpine
+	docker pull postgres:${POSTGRES_VERSION}-alpine
 
 # TODO:  Don't build again, but find ID by filtering and tag after build
 latest:  ## Build and tag as 'latest'

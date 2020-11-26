@@ -21,7 +21,7 @@ Note: it will run the regression tests after docker-postgres creates the files a
 All variables can be supplied to `make`:
 
 ```
-    PG_VERSION=9.5 PGTAP_VERSION=v1.0.0 make build
+    POSTGRES_VERSION=9.5 PGTAP_VERSION=v1.0.0 make build
     POSTGRES_USER=soren_kierkegaard make run
 ```
 
@@ -40,7 +40,7 @@ docker run <repo>/<image>:<tag>
 
 ### Docker Build Args
 
-- PG_VERSION
+- POSTGRES_VERSION
   `make list` will provide acceptable versions. You need to supply the
   `-alpine` if you bypass the Makefile. Note that this Dockerfile is not
   tested with Debian base images.
@@ -53,7 +53,7 @@ docker run <repo>/<image>:<tag>
 - IMAGE_NAME
   Default: pgtap
 - IMAGE_TAG
-  Default: <PG_VERSION>-<PGTAP_VERSION>
+  Default: <POSTGRES_VERSION>-<PGTAP_VERSION>
 
 ### Postgres ENV Vars
 
@@ -75,6 +75,12 @@ See [the postgres image documentation](https://hub.docker.com/_/postgres) for ho
 Note: if you've changed the <repo>/<image>:<tag>, these should also be passed to `make run`.
 
 ## Changelog
+
+master
+
+- Add Github Actions to build and push to docker registry
+- Remove postgres image ENV variables from Dockerfile and Makefile build
+- Change PG_VERSION to POSTGRES_VERSION
 
 v0.0.4, Nov 26 2020
 

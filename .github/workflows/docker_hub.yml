@@ -1,8 +1,7 @@
-name: matrix build and push from version tags
-
+name: matrix build and push releases
 on:
-  push:
-    tags: "v*.*.*"
+  release:
+    types: [published]
 
 jobs:
   main:
@@ -35,7 +34,7 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          username: ${{ github.actor }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
 
       - name: Set up Docker Buildx
@@ -57,13 +56,18 @@ jobs:
             POSTGRES_VERSION=${{matrix.postgres_version}}
             PGTAP_VERSION=${{matrix.pgtap_version}}
 
-      - name: Image digest
-        run: echo ${{ steps.docker_build.outputs.digest }}
-
       - name: Docker Hub Description
         uses: peter-evans/dockerhub-description@v2
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          username: ${{ github.actor }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
           repository: ${{ github.repository_owner }}/pgtap
-          
+
+      - name: Push to GitHub Packages
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: docker.pkg.github.com
+          repository: lmergner/docker-pgtap/pgtap
+          tags: ${{ github.repository_owner }}/pgtap:${{matrix.postgres_version}}-${{matrix.pgtap_version}}

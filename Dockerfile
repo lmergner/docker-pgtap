@@ -5,7 +5,7 @@ from postgres:${POSTGRES_VERSION}
 
 COPY installcheck-pgtap.sh /docker-entrypoint-initdb.d/
 COPY docker-healthcheck /usr/local/bin/
-COPY create_extension.sql /docker-entrypoint-initdb.d/
+COPY create-extension.sql /docker-entrypoint-initdb.d/
 
 # TODO: move locale support to a builder image
 RUN set -ex && \

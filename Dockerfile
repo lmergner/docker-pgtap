@@ -1,10 +1,7 @@
 ARG POSTGRES_VERSION="13-alpine"
-
-from postgres:${POSTGRES_VERSION}
-
-
 ARG PGTAP_VERSION="v1.1.0"
 
+from postgres:${POSTGRES_VERSION}
 
 COPY installcheck-pgtap.sh /docker-entrypoint-initdb.d/
 COPY docker-healthcheck /usr/local/bin/
@@ -14,6 +11,8 @@ RUN set -ex && \
     postgresql \
     postgresql-contrib \
     build-base \
+    patch \
+    make \
     diffutils \
     git \
     perl && \

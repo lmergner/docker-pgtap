@@ -7,7 +7,7 @@ all: latest
 
 REPO?=lmergner
 IMAGE_NAME?=pgtap
-PG_VERSION?=12
+PG_VERSION?=13
 PGTAP_VERSION?=v1.1.0
 IMAGE_TAG?=${PG_VERSION}-${PGTAP_VERSION}
 PORT?=5432
@@ -92,14 +92,14 @@ list:	## pull valid versions for pgTap (from Github) and PostgreSQL (from hub.do
 	@python -c "$$GET_VERSIONS"
 
 run:    ## run the docker container
-	$(RUN) 
+	$(RUN)
 
 try:	## run the docker container with --rm
 	$(RUN) --rm
 
 # TODO:  filter by tags rather than container name
 stop:  ## Stop and remove the container. Defaults to 'pgtap' otherwise supply name as prefix
-	-docker stop ${CONTAINER_NAME} 
+	-docker stop ${CONTAINER_NAME}
 
 clean: stop  ## remove docker images tagged with <repo>/<image_name>, default lmergner/pgtap
 	-docker rm ${CONTAINER_NAME}

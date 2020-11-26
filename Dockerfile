@@ -1,4 +1,4 @@
-ARG PG_VERSION="12-alpine"
+ARG PG_VERSION="13-alpine"
 
 from postgres:${PG_VERSION}
 
@@ -18,10 +18,9 @@ COPY docker-healthcheck /usr/local/bin/
 
 RUN set -ex && \
     apk add --no-cache \
-    bash \
     postgresql \
     postgresql-contrib \
-    make \
+    build-base \
     diffutils \
     git \
     perl && \
@@ -29,10 +28,10 @@ RUN set -ex && \
     chown -R postgres:postgres pgtap/ && \
     cd pgtap/ && \
     git checkout tags/${PGTAP_VERSION} && \
-    make && make install 
+    make && make install
 
 LABEL maintainer="lmergner@gmail.com"
-LABEL version.release="0.0.3" version.pgtap="v1.1.0" version.postgres="12"
+LABEL version.release="0.0.4" version.pgtap="v1.1.0" version.postgres="13"
 LABEL name="docker-pgtap"
 
 HEALTHCHECK CMD [ "docker-healthcheck" ]

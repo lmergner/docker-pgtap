@@ -20,19 +20,12 @@ RUN set -ex && \
     diffutils \
     git \
     perl && \
-    git clone https://gitlab.com/rilian-la-te/musl-locales.git && \
-        cd musl-locales && git checkout master && \
-        cmake -DLOCALE_PROFILE=OFF -D CMAKE_INSTALL_PREFIX:PATH=/usr . && \
-        make && make install && \
-        cd .. && \
-        rm -r musl-locales && \
     git clone git://github.com/theory/pgtap.git && \
         chown -R postgres:postgres pgtap/ && \
         cd pgtap/ && \
         git checkout ${PGTAP_VERSION} && \
         make && make install && \
     apk del .build-dependencies
-    # rm -r /pgtap only seems to save 20 mb
 
 LABEL maintainer="lmergner@gmail.com"
 LABEL version.release="0.0.4" version.pgtap="${PGTAP_VERSION}" version.postgres="${POSTGRES_VERSION}"
@@ -44,3 +37,4 @@ HEALTHCHECK CMD [ "docker-healthcheck" ]
 # TODO:  figure out how to slim down the size of the image. We can't
 #        delete the pgtap/ repo because then we can't run makeinstall
 #        when the container inits.
+#        rm -r /pgtap only seems to save 20 mb

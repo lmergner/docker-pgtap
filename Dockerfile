@@ -28,10 +28,10 @@ RUN set -ex && \
     apk del .build-dependencies
 
 LABEL maintainer="lmergner@gmail.com"
-LABEL version.release="0.0.4" version.pgtap="${PGTAP_VERSION}" version.postgres="${POSTGRES_VERSION}"
+LABEL version.release="0.1.0" version.pgtap="${PGTAP_VERSION}" version.postgres="${POSTGRES_VERSION}"
 LABEL org.opencontainers.image.source https://github.com/lmergner/docker-pgtap
 LABEL org.opencontainers.image.authors "Luke Mergner <lmergner@gmail.com>"
-LABEL org.opencontainers.image.version="0.0.4"
+LABEL org.opencontainers.image.version="0.1.0"
 LABEL org.opencontainers.image.title="docker-pgtap" name="docker-pgtap"
 
 HEALTHCHECK CMD [ "docker-healthcheck" ]

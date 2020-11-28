@@ -28,13 +28,22 @@ RUN set -ex && \
     apk del .build-dependencies
 
 LABEL maintainer="lmergner@gmail.com"
-LABEL version.release="0.0.4" version.pgtap="${PGTAP_VERSION}" version.postgres="${POSTGRES_VERSION}"
+LABEL version.release="0.1.0" version.pgtap="${PGTAP_VERSION}" version.postgres="${POSTGRES_VERSION}"
 LABEL org.opencontainers.image.source https://github.com/lmergner/docker-pgtap
 LABEL org.opencontainers.image.authors "Luke Mergner <lmergner@gmail.com>"
-LABEL org.opencontainers.image.version="0.0.4"
+LABEL org.opencontainers.image.version="0.1.0"
 LABEL org.opencontainers.image.title="docker-pgtap" name="docker-pgtap"
 
 HEALTHCHECK CMD [ "docker-healthcheck" ]
+
+# TODO:  Set healthcheck intervals...
+#        https://docs.docker.com/engine/reference/builder/#healthcheck
+#        The options that can appear before CMD are:
+#
+#        --interval=DURATION (default: 30s)
+#        --timeout=DURATION (default: 30s)
+#        --start-period=DURATION (default: 0s)
+#        --retries=N (default: 3)
 
 # TODO:  figure out how to slim down the size of the image. We can't
 #        delete the pgtap/ repo because then we can't run makeinstall

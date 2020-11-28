@@ -1,10 +1,11 @@
-#!/bin/ash
-set -ex
+#!/bin/bash
+set -exo pipefail
 
-if [ -d 'pgtap' ]; then
-    cd pgtap
-    PGUSER=${POSTGRES_USER:-postgres} make installcheck
-    cd /
+if [[ "${CI}" == "true" ]]; then
+    # Skip installcheck when running on CI because it times out Github Actions healthcheck, we think
+    echo "docker-pgtap: Skipping installcheck on CI!"
+elif [[ ! -d "/pgtap" ]]; then
+    echo "docker-pgtap: Cannot find the /pgtap repo to run make installcheck"
 else
-    echo "Skipping `make installcheck` because pgtap repo is gone"
+    PGUSER="${POSTGRES_USER:-postgres}" make -C /pgtap installcheck
 fi

@@ -1,4 +1,4 @@
-.PHONY: all help pull latest build list run try stop clean psql exec
+.PHONY: all help pull latest build list run try stop clean psql exec ci-test
 
 all: latest
 
@@ -30,8 +30,7 @@ docker run \
 	$(if $(POSTGRES_PASSWORD),-e POSTGRES_PASSWORD=${POSTGRES_PASSWORD}) \
 	$(if $(POSTGRES_USER), -e POSTGRES_USER=${POSTGRES_USER}) \
 	$(if $(POSTGRES_DB), -e POSTGRES_DB=${POSTGRES_DB}) \
-	$(if $(CONTAINER_NAME), --name ${CONTAINER_NAME}) \
-	${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+	$(if $(CONTAINER_NAME), --name ${CONTAINER_NAME})
 endef
 export RUN
 
@@ -87,10 +86,13 @@ list:	## pull valid versions for pgTap (from Github) and PostgreSQL (from hub.do
 	@python -c "$$GET_VERSIONS"
 
 run:    ## run the docker container
-	$(RUN)
+	$(RUN) ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 
 try:	## run the docker container with --rm
-	$(RUN) --rm
+	$(RUN) --rm -it ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
+
+ci-test:  ## run the docker container with additional args from Github Actions
+	$(RUN) -e GITHUB_ACTIONS=true -e CI=true --health-start-period 20s --health-interval 30s --health-timeout 5s --health-retries 5 ${REPO}/${IMAGE_NAME}:${IMAGE_TAG}
 
 # TODO:  filter by tags rather than container name
 stop:  ## Stop and remove the container. Defaults to 'pgtap' otherwise supply name as prefix
@@ -104,7 +106,7 @@ psql: ## Connect via psql
 	@psql --dbname postgresql://$${POSTGRES_USER}:$${POSTGRES_PASSWORD}@$${DOCKER_HOST#"ssh://"}/$${POSTGRES_DB}
 
 exec:
-	docker exec -it ${CONTAINER_NAME} ash
+	docker exec -it ${CONTAINER_NAME} bash
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-16s\033[0m %s\n", $$1, $$2}'

@@ -2,6 +2,8 @@
 
 Version 0.1.0
 
+Pull from the [Docker Hub](https://hub.docker.com/r/lmergner/pgtap).
+
 Creates a [Docker][] image with [PostgreSQL][] and [pgTap][]. It inherits from the
 offical PostgreSQL [docker image][], and most of the run-time options can be found
 there. To run tests, see the pgTap documentation, especially about `pg_prove` or
@@ -16,9 +18,10 @@ with the pgTap extension installed.
 
 ## Image Tags
 
-The latest stable version of PostgreSQL (currently 13) and the latest functional
-version of pgTap. Currently, it installs the "master" branch because
-of [a breaking change in PostgreSQL](https://github.com/theory/pgtap/commit/99fdf949b8c3ea157fe078941c6e2af8c7dd7ae8). Currently equivalent to `:13-master`.
+The `:testing` tag installs the latest stable version of PostgreSQL (currently 13)
+and the latest functional version of pgTap. Currently, it installs the "master"
+branch because of [a breaking change in PostgreSQL](https://github.com/theory/pgtap/commit/99fdf949b8c3ea157fe078941c6e2af8c7dd7ae8).
+Currently equivalent to `:13-master`.
 
 Otherwise, tags represent the postgres and pgtap versions, i.e. \<POSTGRES_VERSION>-\<PGTAP_VERSION>.
 
@@ -52,6 +55,13 @@ Using a .env file and some variety of dotenv makes this pretty easy.
 
 ### Docker Build Args
 
+These variables will be used by `make` if set in `env`. Or they can be
+passed directly to `docker build`.
+
+```
+docker build --build-args POSTGRES_VERSION=11-alpine --build-args=PGTAP_VERSION=v1.0.0
+```
+
 - POSTGRES_VERSION
   `make list` will provide acceptable versions. You need to supply the
   `-alpine` if you bypass the Makefile. Note that this Dockerfile is not
@@ -59,6 +69,9 @@ Using a .env file and some variety of dotenv makes this pretty easy.
 - PGTAP_VERSION
   `make list` will provide acceptable versions. Note that the 'v' must prefix
   the version number. You can also supply a branch name like `master`.
+
+### make-specific ENV variables
+
 - REPO
   Your [Docker namespace](https://docs.docker.com/docker-hub/repos/).
   Default: "lmergner."
@@ -66,25 +79,29 @@ Using a .env file and some variety of dotenv makes this pretty easy.
   Default: pgtap
 - IMAGE_TAG
   Default: \<POSTGRES_VERSION>-\<PGTAP_VERSION>
+- CONTAINER_NAME
+  An alias for the container
+  default: random docker identifier
+- PORT
+
+  default: 5432
 
 ### Postgres ENV Vars
 
 See [the postgres image documentation](https://hub.docker.com/_/postgres) for how the variables are used by the base image.
 
-- CONTAINER_NAME
-  default: random docker identifier
-- PORT
-  default: 5432
+```
+docker run --env POSTGRES_PASSWORD=blarg --port 5432:5432 -d --name pgtap lmergner/pgtap:11-v1.1.0
+```
+
 - POSTGRES_DB
+  The default database created on container first run.
   default: postgres
 - POSTGRES_USER
   The database owner and connection user.
   default: postgres
 - POSTGRES_PASSWORD
   The base postgres image requires a password to be set.
-  default: postgres
-
-Note: if you've changed the \<repo>/\<image>:\<tag>, these should also be passed to `make run`.
 
 [pgtap]: https://pgtap.org/
 [docker]: https://www.docker.com/

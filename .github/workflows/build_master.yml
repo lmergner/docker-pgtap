@@ -54,5 +54,5 @@ jobs:
           build-args: |
             POSTGRES_VERSION=13-alpine
             PGTAP_VERSION=master
-          labels:
-            - org.opencontainers.image.revision=${{ github.sha }}
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}

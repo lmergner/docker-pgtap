@@ -1,7 +1,10 @@
 name: matrix build and push releases
 on:
   release:
-    types: [published]
+    types: [published, unpublished]
+  push:
+    tags: v*.*.*
+  workflow_dispatch:
 
 jobs:
   main:
@@ -60,14 +63,7 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |
-            POSTGRES_VERSION=${{matrix.postgres_version}}
+            POSTGRES_VERSION=${{matrix.postgres_version}}-alpine
             PGTAP_VERSION=${{matrix.pgtap_version}}
-          labels:
-            - org.opencontainers.image.revision=${{ github.sha }}
-
-      - name: Docker Hub Description
-        uses: peter-evans/dockerhub-description@v2
-        with:
-          username: ${{ github.actor }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-          repository: ${{ github.repository_owner }}/pgtap
+          labels: |
+            org.opencontainers.image.revision=${{ github.sha }}

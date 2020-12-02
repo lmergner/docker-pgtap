@@ -1,8 +1,8 @@
-name: build and push from master branches
+name: Build Latest
 
 on:
+  # XXX: Build on any branch push
   push:
-    branches: [master]
 
 jobs:
   main:
@@ -47,9 +47,11 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           platforms: linux/amd64,linux/arm/v7
+          # platforms: linux/386,linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64,linux/ppc64le,linux/s390x
           push: true
           tags: |
             ${{ github.repository_owner }}/pgtap:testing
+            ghcr.io/${{ github.repository_owner }}/pgtap:testing
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
           build-args: |

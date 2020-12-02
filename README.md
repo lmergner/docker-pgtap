@@ -16,6 +16,8 @@ install has finished and the database is ready to serve.
 This image does not install pg_prove. It aims to be a vanilla PostgreSQL image
 with the pgTap extension installed.
 
+![Build Matrix](https://github.com/lmergner/docker-pgtap/workflows/build_matrix/badge.svg)
+
 ## Image Tags
 
 The `:testing` tag installs the latest stable version of PostgreSQL (currently 13)
@@ -44,7 +46,7 @@ as env vars to other `make` commands.
 
 All variables can be supplied to `make`:
 
-```
+```sh
     POSTGRES_VERSION=9.5 PGTAP_VERSION=v1.0.0 make build
     POSTGRES_USER=soren_kierkegaard make run
 ```
@@ -58,7 +60,7 @@ Using a .env file and some variety of dotenv makes this pretty easy.
 These variables will be used by `make` if set in `env`. Or they can be
 passed directly to `docker build`.
 
-```
+```sh
 docker build --build-args POSTGRES_VERSION=11-alpine --build-args=PGTAP_VERSION=v1.0.0
 ```
 
@@ -90,7 +92,7 @@ docker build --build-args POSTGRES_VERSION=11-alpine --build-args=PGTAP_VERSION=
 
 See [the postgres image documentation](https://hub.docker.com/_/postgres) for how the variables are used by the base image.
 
-```
+```sh
 docker run --env POSTGRES_PASSWORD=blarg --port 5432:5432 -d --name pgtap lmergner/pgtap:11-v1.1.0
 ```
 
